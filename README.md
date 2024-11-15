@@ -32,7 +32,7 @@ TODO
 ## Customization parameters 
 `consequence` let you customize paramaters for a full control of the dataset you need for your analysis. The aim is to produce a consensus sequence and/or an MSA ideal for your downstream analyses.
 
-<details><summary> #### `cutoff`</summary>
+<details><summary><b><code>cutoff</code></b></summary>
 
 defult: 0.85
 
@@ -55,7 +55,8 @@ End → A at position 24
 
 </details>
   
-#### `gap_count`
+<details><summary><b><code>gap_count</code></b></summary>
+  
 default: 10
 
 This parameter allows to maintain the gap open. It is the number of gaps that the user tolerates after a base or a sequence of bases is retrieved.
@@ -69,8 +70,10 @@ setting `gap_count = 10` → `ATGCATCAGC-------CG-----CG----ATGTGCTGCTCGCTACATCA
 setting `gap_count = 6` → `CG-----CG----ATGTGCTGCTCGCTACATCATCGATCGAT`
 
 setting `gap_count = 3` → `ATGTGCTGCTCGCTACATCATCGATCGAT`
-
-#### `gap_multiplier`
+</details>
+  
+<details><summary><b><code>gap_multiplier</code></b></summary>
+  
 default: None
 
 This parameter accepts an integer or a float number. It overwrites `gap_count` as the gap open tolerance is modulated by the length of the preceeding sequence found. 
@@ -83,8 +86,10 @@ setting `gap_multiplier = 1` → `ATGCATCAGC----TGCCAA----CG`
 setting `gap_multiplier = .5` → `ATGCATCAGC----TGCCAA`
 
 setting `gap_multiplier = .2` → `ATGCATCAGC`
-
-#### `nom_cutoff`
+</details>
+  
+<details><summary><b><code>nom_cutoff</code></b></summary>
+  
 default: 0.8
 
 This parameter is used to select most representative bases per position and eventually translate in IUPAC nomenclature.
@@ -107,13 +112,17 @@ setting `nom_cutoff = 1` consensus result → `ATGCAT-AGT`
 setting `nom_cutoff = .8` consensus result → `A`**`W`**`GCAT-AG`**`Y`**
 
 setting `nom_cutoff = .2` consensus result → `A`**`D`**`GCAT`**`C`**`AG`**`Y`**
-
-#### `separated`
+</details>
+  
+<details><summary><b><code>separated</code></b></summary>
+  
 default: False
 
 If set True allows to save cut alignment sequences individually.
-
-#### `remove_cutoff`
+</details>
+  
+<details><summary><b><code>remove_cutoff</code></b></summary>
+  
 default: None
 
 This parameters is used to remove sequences from MSA with high percentage of gaps in the selected region. 
@@ -137,13 +146,19 @@ setting `remove_cutoff = 0.8` removes line 6 (`T--G----ATG----------------`)
 setting `remove_cutoff = 0.5` removes 6 lines (1, 4, 5, 6, 7, 8)
 
 setting `remove_cutoff = 0.3` removes 8 lines (last two lines remain)
-
-#### `start` and `end`
+</details>
+  
+<details><summary><b><code>start and end</code></b></summary>
+  
 default: estimated with the function `find_position`
 
 `start` and `end` defines the boundaries where to cut the sequences of the multiple sequence alignment and the consensus. 
-
-#### `no_cut_consensus`
+</details>
+  
+<details><summary><b><code>no_cut_consensus</code></b></summary>
+  
 default: False
 
 if set True does not perform consensus cut based on `find_position` function
+</details>
+  
