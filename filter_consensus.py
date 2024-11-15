@@ -55,12 +55,18 @@ def inspect_seqs(matrix):
     pos_dict = get_position_dictionary(matrix)
     return pos_dict
 
-def find_position(pos_dict, cutoff=.85, gap_count=10):
+def find_position(matrix, cutoff=.85, gap_count=10, gap_multiplier=None):
+    pos_dict = inspect_seqs(matrix)
+
     target = 0
     counter = 0
     gap_counter = 0
     positions = list(pos_dict.keys())
     positions_details = {}
+
+
+    if isinstance(gap_multiplier, int) or isinstance(gap_multiplier, float):
+        gap_relative = True
     
     for pos in positions:
         bases = pos_dict[pos]["non-gaps"] / pos_dict[pos]["length"]
@@ -72,6 +78,8 @@ def find_position(pos_dict, cutoff=.85, gap_count=10):
             if gap_counter > 0:
                 counter += gap_counter
                 gap_counter = 0
+                if gap_relative:
+                    gap_count = counter * gap_multiplier
         elif counter > 0 and gap_counter < gap_count:
             gap_counter += 1
         else:
@@ -94,42 +102,50 @@ def find_position(pos_dict, cutoff=.85, gap_count=10):
 
 def get_consensus(bases, nom_cutoff):
     if nom_cutoff == 0:
-        raise ValueError("Misleadind nomenclature cutoff inserted. You can't set it as 0. Please provide a greater number.")
+        raise ValueError("Misleading nomenclature cutoff inserted. You can't set it as 0. Please provide a greater number.")
     if nom_cutoff < .5:
-        warnings.warn("Cutoff value provided is very low. Consesus result might be misleading.")
+        warnings.warn("Cutoff value provided is very low. Consensus result might be misleading.")
 
     count_bases = Counter(bases)
     sorted_bases = count_bases.most_common()
-    most_common, highest_count = sorted_bases[0]
+    highest_count = sorted_bases[0][1]
     
-    if most_common == "-":
-        return "-"
-    
-    top_bases = [nucleotide for nucleotide, count in sorted_bases if count >= highest_count*nom_cutoff and nucleotide != "-"]
+    top_bases = [nucleotide for nucleotide, count in sorted_bases if count >= highest_count*nom_cutoff]
+
+    if len(top_bases) > 1 and "-" in top_bases:
+        top_bases.remove("-")
+
     if len(top_bases) == 1:
         return top_bases[0]
-    
+
     if len(top_bases) > 1:
         base_pair = frozenset(top_bases)
         return IUPAC_CODES.get(base_pair, "n")
 
     return "n"
 
-def build_consensus(matrix, start=0, end=None, nom_cutoff=.8):
+def build_consensus(matrix, start=0, end=None, no_cut_consensus=False, nom_cutoff=.8):
     """
     nom_cutoff is the parameter used to establish if two bases have to be considered as one. For example if there are 8 "a" and 7 "t", consensus is "a" if nom_cutoff is 1, "w" if nom_cutoff is lower (like 0.8).
     """
-    if start == 0:
-        warnings.warn("Start not provided for consensus cut, default is 0.")
-    if end is None:
-        warnings.warn("End not provided for consensus cut, default is the whole length of the MSA provided.")
-        end = len(matrix)
+    if not no_cut_consensus:
+        if start == 0:
+            warnings.warn("Start not provided for consensus cut, default is 0.")
+
+        if end is None:
+            warnings.warn("End not provided for consensus cut, default is the whole length of the MSA provided.")
+            end = len(matrix)
+
     consensus = ""
+
     for row in matrix:
         consensus += get_consensus(row, nom_cutoff)
+
     return SeqRecord(Seq(consensus[start:end]), id="consensus", description="Consensus sequences from the original MSA")
 
-def cut_msa(sequences, start=0, end=None, remove_low_informative=False, remove_cutoff=.5):
+def cut_msa(sequences, start=0, end=None, remove_cutoff=None):
+    remove_low_informative = False
+
     if start == 0:
         if end is None:
             warnings.warn("You did not provide value to cut the MSA. Returning original MSA.")
@@ -140,6 +156,12 @@ def cut_msa(sequences, start=0, end=None, remove_low_informative=False, remove_c
     if end is None:
         warnings.warn("End not provided for MSA cut, default is the whole length of the MSA provided.")
         end = len(next(iter(sequences.values())).seq)
+
+    if remove_cutoff != None:
+        if not isinstance(remove_cutoff, float) or remove_cutoff >= 1 or remove_cutoff <= 0:
+            raise ValueError("Wrong remove_cutoff value %s. Insert a float number between 0 and 1 (for example 0.5)" % remove_cutoff)
+        else:
+            remove_low_informative = True
 
     cut_msa = {}
     removed = 0
@@ -177,11 +199,9 @@ def __main__():
     # read file
     sequences = extract_sequences(fasta)
     # get matrix
-    matrix = seqs_to_matrix(sequences)
-    # get pos_dict
-    pos_dict = inspect_seqs(matrix)
+    matrix = seqs_to_matrix(sequences)    
     # get start, end
-    start, end = find_position(pos_dict, cutoff=.85, gap_count=10)
+    start, end = find_position(matrix, cutoff=.85, gap_count=10)
     # build consensus
     consensus = build_consensus(matrix, start=start, end=end, nom_cutoff=.8)
     # save consensus as fasta
