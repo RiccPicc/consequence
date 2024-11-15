@@ -32,7 +32,8 @@ TODO
 ## Customization parameters 
 `consequence` let you customize paramaters for a full control of the dataset you need for your analysis. The aim is to produce a consensus sequence and/or an MSA ideal for your downstream analyses.
 
-#### `cutoff`
+<details><summary> #### `cutoff`</summary>
+
 defult: 0.85
 
 The objective is that start and end of the sequence must mostly be sequences of bases in most sequences of the MSA. This parameter allows to assess if a position is considerable a gap or a base throughout the MSA.
@@ -52,6 +53,8 @@ Start → A at position 5
 
 End → A at position 24
 
+</details>
+  
 #### `gap_count`
 default: 10
 
