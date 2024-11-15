@@ -64,7 +64,7 @@ def find_position(matrix, cutoff=.85, gap_count=10, gap_multiplier=None):
     positions = list(pos_dict.keys())
     positions_details = {}
 
-
+    gap_relative = False
     if isinstance(gap_multiplier, int) or isinstance(gap_multiplier, float):
         gap_relative = True
     

@@ -24,20 +24,3 @@ def rename_leafs(treefile, ids_species_map):
         for id, species in ids_species_map.items():
             tree = tree.replace(id, species)
     return tree
-  
-def main():
-    # produce dict that maps sequence id to species name
-    fasta_path = "./16S-23S_cut_msa.fasta"
-    print("Producing map id ~ species")
-    id_species_map = map_id_species(fasta_path)
-    print("Map produced")
-    # rename tree leafs
-    tree_path = "./16S-23S_cut_msa.fasta.treefile"
-    print("Renaming leafs")
-    renamed_tree = rename_leafs(tree_path, id_species_map)
-    print("Leafs renamed")
-    outfile = "./16S-23S_renamed_tree.treefile"
-    print("Returning output %s" % outfile)
-    with open(outfile, "w") as handle:
-        handle.write(renamed_tree)
-    print("%s created with success" % outfile)
