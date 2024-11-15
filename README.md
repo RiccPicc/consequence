@@ -9,20 +9,20 @@
 - Biopython
 
 ## Features
+- [ ] Useable from command line
+- [ ] Download data using NCBI queries
+- [ ] Recognition of fasta file and perform alignment if needed
+- [x] Build map sequence ID - species
 - [x] Produces a consensus sequence
 - [x] Finds best position to cut the MSA and the consensus for better performance of downstream phylogenetic analyses
 - [x] Removes from MSA uninformative sequences
-- [x] Complete customisation of parameters to better fit your interests
-- [ ] Useable from command line
-- [ ] Recognition of fasta file and perform alignment if needed
+- [x] Customization parameters to better fit your interests
 - [ ] Possibility to remove internal long gaps
 - [ ] Concatenate sequences based on metadata
 - [ ] Build consensus species by species
 - [ ] Concatenate species consesnsus sequences
-- [ ] Build map sequence ID - species
 - [ ] Build phylogenetic tree (iqtree2)
 - [x] Rename phylogenetic tree leafs (from sequence ID to species name)
-- [ ] Download data using NCBI queries
 - [ ] Implement [barcoding gap analysis script](https://github.com/AleTatti/Barcoding-Analysis)
 
 ## Example
