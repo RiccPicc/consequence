@@ -2,7 +2,7 @@
 
 ⚠️ **UNDER DEVELOPMENT** ⚠️
 
-`consequence` is a `python3` tool that produces a consensus sequences based on a MSA fasta.
+`consequence` is a tool that wraps other tools and scirpts to produce alignments, consensus sequences and phylogenetic trees.
 
 ## Dependencies
 - Python 3.10+
