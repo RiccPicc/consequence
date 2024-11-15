@@ -10,7 +10,7 @@
 - [x] Produces a consensus sequence
 - [x] Finds best position to cut the MSA and the consensus for better performance of downstream phylogenetic analyses
 - [x] Removes from MSA uninformative sequences
-- [x] Complete personalization of parameters to better fit your interests
+- [x] Complete customisation of parameters to better fit your interests
 - [ ] Useable from command line
 - [ ] Recognition of fasta file and perform alignment if needed
 - [ ] Possibility to remove internal long gaps
