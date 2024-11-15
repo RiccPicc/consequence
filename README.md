@@ -2,7 +2,7 @@
 
 ⚠️ **UNDER DEVELOPMENT** ⚠️
 
-`consequence` (pronunced /ˈkɒnsiːkwəns/) is a tool that wraps other tools and scirpts to produce alignments, consensus sequences and phylogenetic trees.
+`consequence` (pronunced /ˈkɒnsiːkwəns/) is a bioinformatic tool that wraps other tools and scirpts to produce alignments, consensus sequences and phylogenetic trees.
 
 ## Dependencies
 - Python 3.10+
@@ -30,7 +30,7 @@
 TODO
 
 ## Customization parameters 
-`consequence` let you customize paramaters for a full control of the dataset you need for your analysis. The aim is to produce a consensus sequence and/or an MSA ideal for your downstream analyses.
+`consequence` lets you customize paramaters for a full control of the dataset you need for your analysis. The aim is to produce a consensus sequence and/or an MSA ideal for your downstream analyses.
 
 <details><summary><b><code>cutoff</code></b></summary>
 
