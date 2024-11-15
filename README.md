@@ -2,7 +2,7 @@
 
 ⚠️ **UNDER DEVELOPMENT** ⚠️
 
-`consequence` (pronunced kon·see·kwns) is a tool that wraps other tools and scirpts to produce alignments, consensus sequences and phylogenetic trees.
+`consequence` (pronunced /ˈkɒnsiːkwəns/) is a tool that wraps other tools and scirpts to produce alignments, consensus sequences and phylogenetic trees.
 
 ## Dependencies
 - Python 3.10+
