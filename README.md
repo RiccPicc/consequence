@@ -12,8 +12,16 @@
 - [x] Removes from MSA uninformative sequences
 - [x] Complete personalization of parameters to better fit your interests
 - [ ] Useable from command line
-- [ ] Perform MSA
+- [ ] Recognition of fasta file and perform alignment if needed
 - [ ] Possibility to remove internal long gaps
+- [ ] Concatenate sequences based on metadata
+- [ ] Build consensus species by species
+- [ ] Concatenate species consesnsus sequences
+- [ ] Build map sequence ID - species
+- [ ] Build phylogenetic tree (iqtree2)
+- [x] Rename phylogenetic tree leafs (from sequence ID to species name)
+- [ ] Download data using NCBI queries
+- [ ] Implement [barcoding gap analysis script](https://github.com/AleTatti/Barcoding-Analysis)
 
 ## Example
 TODO
