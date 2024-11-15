@@ -1,41 +1,75 @@
 import argparse
+from filter_consensus import *
+from rename_leafs import *
 
 def parse_arguments():
     parser = argparse.ArgumentParser(description="Process a FASTA file to produce consensus sequence, cut alignment for best downstream phylogenetic analyses, and build phylogenetic tree. Read https://github.com/RiccPicc/consequence for more details.")
 
     # Mandatory arguments
-    parser.add_argument('--input', type=str, required=True, help="Path to the input FASTA (sequences or alignment) or Newick (tree) file")
-    parser.add_argument('--output', type=str, required=True, help="Path to the output file.")
+    parser.add_argument('--input', type=str, required=True, help="Path to the input FASTA (sequences or alignment) or Newick (.treefile output of iqtree2) formats.")
+    parser.add_argument('--output_path', type=str, required=True, help="Path where to place output files.")
 
     # Optional arguments with default values
-    parser.add_argument('--find_best_position', type=bool, default=True, help="Whether to find the best position to cut alignment and consensus sequence (default: True).")
+    parser.add_argument('--find_best_position', type=bool, default=True, help="Whether to find the best position to cut alignment and consensus sequence (default: True). Does not work with unaligned files if no_msa=True. ")
     parser.add_argument('--cutoff_best_base', type=float, default=0.85, help="Cutoff value for selecting the best base per position (default: 0.85).")
     parser.add_argument('--gap_count', type=int, default=10, help="Maximum allowed gap open (default: 10).")
     parser.add_argument('--gap_multiplier', type=float, default=None, help="Multiplier for gap open, overrides gap_count (default: None).")
     parser.add_argument('--nomenclature_cutoff', type=float, default=0.8, help="Cutoff value for selecting consensus base(s) per position (default: 0.8).")
-    parser.add_argument('--no_cut_consensus', action='store_true', help="If set, do not cut consensus (default: False).")
+    parser.add_argument('--no_cut_consensus', type=bool, default=False, help="If set, do not cut consensus (default: False).")
     parser.add_argument('--remove_cutoff', type=float, default=None, help="Cutoff value for removal (default: None).")
-    parser.add_argument('--cut_msa', type=bool, default=True, help="Whether to cut MSA (default: True).")
+    parser.add_argument('--cut_msa', type=bool, default=True, help="Whether to cut MSA (default: True). Does not work with unaligned files if no_msa=True.")
     parser.add_argument('--build_consensus', type=bool, default=True, help="Whether to build consensus (default: True).")
     parser.add_argument('--rename_leafs', type=bool, default=True, help="Whether to rename leaf nodes (default: True).")
+    parser.add_argument('--save_intermediate', type=bool, default=False, help="Whether to save all intermediate files (default: False).")
+    parser.add_argument('--save_individually', type=bool, default=False, help="Whether to save all sequences of msa individually (default: False).")
+    parser.add_argument('--save_species', type=bool, default=False, help="Whether to save consensus of species individually (default: False).")
+    parser.add_argument('--no_msa', type=bool, default=False, help="Does not perform MSA in case of sequences input (default: False).")
 
     return parser.parse_args()
 
 def main():
     args = parse_arguments()
 
-    print(f"Input file: {args.input}")
-    print(f"Output file: {args.output}")
-    print(f"Find best position: {args.find_best_position}")
-    print(f"Cutoff best base: {args.cutoff_best_base}")
-    print(f"Gap count: {args.gap_count}")
-    print(f"Gap multiplier: {args.gap_multiplier}")
-    print(f"Nomenclature cutoff: {args.nomenclature_cutoff}")
-    print(f"No cut consensus: {args.no_cut_consensus}")
-    print(f"Remove cutoff: {args.remove_cutoff}")
-    print(f"Cut MSA: {args.cut_msa}")
-    print(f"Build consensus: {args.build_consensus}")
-    print(f"Rename leafs: {args.rename_leafs}")
+    fasta = args.input
+    # read file
+    sequences = extract_sequences(fasta)
+    # get matrix
+    matrix = seqs_to_matrix(sequences)  
+
+
+    # check input nature
+    # if fasta -> make msa
+    # if msa -> make cut/consensus
+    is_msa = True # this has to be set with check_input function in future issue
+
+    if args.no_msa:
+        is_msa = False
+
+    # get start, end
+    if args.find_best_position and is_msa:
+        start, end = find_position(matrix, 
+                                   cutoff=args.cutoff_best_base, gap_count=args.gap_count, gap_multiplier=args.gap_multiplier)
+    else:
+        start, end = 0, len(matrix)-1
+    # build consensus
+    if args.build_consensus:
+        consensus = build_consensus(matrix, 
+                                    start=start, 
+                                    end=end, 
+                                    nom_cutoff=args.nomenclature_cutoff,
+                                    no_cut_consensus=args.no_cut_consensus)
+        # save consensus as fasta
+        save_fasta(consensus, "consensus.fasta", separated=False)
+    # cut msa
+    if args.cut_msa and is_msa:
+        msa_cut, rem_cut = cut_msa(sequences, start=start, end=end)
+        # save msa as fasta
+        save_fasta(msa_cut, "cut_msa.fasta", separated=False)
+        if args.remove_cutoff != None:
+            save_fasta(rem_cut, "removed.fasta", separated=False)
+    
+    # use iqtree2 on cut_msa, species_consensus, msa_not_cut
+    # rename_leafs on .treefile
 
 if __name__ == "__main__":
     main()
