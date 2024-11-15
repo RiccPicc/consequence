@@ -41,7 +41,7 @@ defult: 0.85
 
 The objective is that start and end of the sequence must mostly be sequences of bases in most sequences of the MSA. This parameter allows to assess if a position is considerable a gap or a base throughout the MSA.
 
-Example (not real):
+Toy example:
 
 ```
 ----ATGCATCAGC----CG----ATG--------GTGATCGATCGACTAG-----GCTAGCATCGAT------CAGTCAGAGAA------GATCGAC-----
