@@ -7,6 +7,10 @@
 ## Dependencies
 - Python 3.10+
 - Biopython
+- [Mafft](https://mafft.cbrc.jp/alignment/software/)
+- [IQ-TREE2](http://www.iqtree.org/#download)
+
+For windows user is highly reccomanded to use [WSL2](https://learn.microsoft.com/en-us/windows/wsl/install) and download Linux (Intel) versions of  [Mafft](https://mafft.cbrc.jp/alignment/software/) and [IQ-TREE2](http://www.iqtree.org/#download)
 
 ## Features
 - [ ] Useable from command line
