@@ -193,20 +193,3 @@ def save_fasta(sequences, output, separated=False):
             for record in sequences.values():
                 with open(record.id+".fasta", "w") as handle:
                     SeqIO.write(record, handle, "fasta")
-
-def __main__():
-    fasta = "./16S_23S_aln.fasta"
-    # read file
-    sequences = extract_sequences(fasta)
-    # get matrix
-    matrix = seqs_to_matrix(sequences)    
-    # get start, end
-    start, end = find_position(matrix, cutoff=.85, gap_count=10)
-    # build consensus
-    consensus = build_consensus(matrix, start=start, end=end, nom_cutoff=.8)
-    # save consensus as fasta
-    save_fasta(consensus, "consensus.fasta", separated=False)
-    # cut msa
-    msa_cut, rem_cut = cut_msa(sequences, start=start, end=end)
-    # save msa as fasta
-    save_fasta(msa_cut, "16S-23S_cut_msa.fasta", separated=False)

@@ -31,11 +31,14 @@ def main():
     args = parse_arguments()
 
     fasta = args.input
+    out = args.output_file
+    if not out.endswith("/"):
+        out += "/"
     # read file
+    print("Reading sequences file")
     sequences = extract_sequences(fasta)
-    # get matrix
-    matrix = seqs_to_matrix(sequences)  
-
+    
+    print("Check nature of the file")
 
     # check input nature
     # if fasta -> make msa
@@ -44,6 +47,14 @@ def main():
 
     if args.no_msa:
         is_msa = False
+        print("No alignment will be performed as --no_msa=True")
+    # else:
+    #   align with subprocess mafft
+    
+
+    # get matrix
+    print("Building positions matrix")
+    matrix = seqs_to_matrix(sequences)  
 
     # get start, end
     if args.find_best_position and is_msa:
@@ -59,17 +70,30 @@ def main():
                                     nom_cutoff=args.nomenclature_cutoff,
                                     no_cut_consensus=args.no_cut_consensus)
         # save consensus as fasta
-        save_fasta(consensus, "consensus.fasta", separated=False)
+        save_fasta(consensus, out+"consensus.fasta", separated=False)
     # cut msa
     if args.cut_msa and is_msa:
         msa_cut, rem_cut = cut_msa(sequences, start=start, end=end)
         # save msa as fasta
-        save_fasta(msa_cut, "cut_msa.fasta", separated=False)
+        save_fasta(msa_cut, out+"cut_msa.fasta", separated=False)
         if args.remove_cutoff != None:
-            save_fasta(rem_cut, "removed.fasta", separated=False)
+            save_fasta(rem_cut, out+"removed.fasta", separated=False)
     
     # use iqtree2 on cut_msa, species_consensus, msa_not_cut
     # rename_leafs on .treefile
+    print("Producing map id ~ species")
+    id_species_map = map_id_species(fasta)
+    print("Map produced")
+    # rename tree leafs
+    tree_path = out+"cut_msa.fasta.treefile"
+    print("Renaming leafs")
+    renamed_tree = rename_leafs(tree_path, id_species_map)
+    print("Leafs renamed")
+    renamed_tree_output = out+"renamed_tree.treefile"
+    print("Returning output %s" % renamed_tree_output)
+    with open(renamed_tree_output, "w") as handle:
+        handle.write(renamed_tree)
+    print("%s created with success" % renamed_tree_output)
 
 if __name__ == "__main__":
     main()
