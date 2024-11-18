@@ -36,7 +36,17 @@ TODO
 ## Customization parameters 
 `consequence` lets you customize paramaters for a full control of the dataset you need for your analysis. The aim is to produce a consensus sequence and/or an MSA ideal for your downstream analyses.
 
-<details><summary><b><code>cutoff</code></b></summary>
+**REMINDER**: After each of these parameters you have to insert the value withouot "=", just a space. For example `python -m consequence --input test/my_sequences.fasta --output_path ./test/results/ --rename_leafs False` 
+
+<details><summary><b><code>--find_best_position</code></b></summary>
+
+default: True
+
+This parameters allows to find best position for start and stop where to perform cuts and obtain meaningful sequences for following phylogenetic analyses.
+  
+</details>
+
+<details><summary><b><code>--cutoff_best_base</code></b></summary>
 
 defult: 0.85
 
@@ -59,7 +69,7 @@ End → A at position 24
 
 </details>
   
-<details><summary><b><code>gap_count</code></b></summary>
+<details><summary><b><code>--gap_count</code></b></summary>
   
 default: 10
 
@@ -76,7 +86,7 @@ setting `gap_count = 6` → `CG-----CG----ATGTGCTGCTCGCTACATCATCGATCGAT`
 setting `gap_count = 3` → `ATGTGCTGCTCGCTACATCATCGATCGAT`
 </details>
   
-<details><summary><b><code>gap_multiplier</code></b></summary>
+<details><summary><b><code>--gap_multiplier</code></b></summary>
   
 default: None
 
@@ -92,7 +102,7 @@ setting `gap_multiplier = .5` → `ATGCATCAGC----TGCCAA`
 setting `gap_multiplier = .2` → `ATGCATCAGC`
 </details>
   
-<details><summary><b><code>nom_cutoff</code></b></summary>
+<details><summary><b><code>--nomenclature_cutoff</code></b></summary>
   
 default: 0.8
 
@@ -116,6 +126,28 @@ setting `nom_cutoff = 1` consensus result → `ATGCAT-AGT`
 setting `nom_cutoff = .8` consensus result → `A`**`W`**`GCAT-AG`**`Y`**
 
 setting `nom_cutoff = .2` consensus result → `A`**`D`**`GCAT`**`C`**`AG`**`Y`**
+
+</details>
+
+<details><summary><b><code>--no_cut_consensus</code></b></summary>
+
+Default: False
+This parameters does not allow the cut of the consensus, so it will be produced based on the whole MSA obtained from sequences or given as input.
+  
+</details>
+
+<details><summary><b><code>--cut_msa</code></b></summary>
+
+Default: False
+This parameters allows to cut MSA. If not set or set as True, consequence will cut the MSA based on best positions found and perform the following phylogenetic analysis. If set False, following analyses and output produced will base on the whole MSA obtained
+  
+</details>
+
+<details><summary><b><code>--build_consensus</code></b></summary>
+
+Default: True
+This parameters allows the building of consensus sequence based on input msa or sequences.
+  
 </details>
   
 <details><summary><b><code>separated</code></b></summary>
@@ -123,9 +155,10 @@ setting `nom_cutoff = .2` consensus result → `A`**`D`**`GCAT`**`C`**`AG`**`Y`*
 default: False
 
 If set True allows to save cut alignment sequences individually.
+
 </details>
   
-<details><summary><b><code>remove_cutoff</code></b></summary>
+<details><summary><b><code>--remove_cutoff</code></b></summary>
   
 default: None
 
@@ -150,19 +183,36 @@ setting `remove_cutoff = 0.8` removes line 6 (`T--G----ATG----------------`)
 setting `remove_cutoff = 0.5` removes 6 lines (1, 4, 5, 6, 7, 8)
 
 setting `remove_cutoff = 0.3` removes 8 lines (last two lines remain)
-</details>
-  
-<details><summary><b><code>start and end</code></b></summary>
-  
-default: estimated with the function `find_position`
+</details>ù
 
-`start` and `end` defines the boundaries where to cut the sequences of the multiple sequence alignment and the consensus. 
-</details>
+<details><summary><b><code>--rename_leafs</code></b></summary>
   
-<details><summary><b><code>no_cut_consensus</code></b></summary>
+default: True
+
+This parameters allow the renaming of phylogenetic tree leafs from sequences ID into species scientific names.
+
+</details>
+
+<details><summary><b><code>--save_individually</code></b></summary>
   
 default: False
 
-if set True does not perform consensus cut based on `find_position` function
+This parameters allow to save all MSA sequences into single files. If --no_msa False, input sequences will be saved individually (unaligned).
+
 </details>
+
+<details><summary><b><code>--save_intermediate</code></b></summary>
   
+default: False
+
+This parameters allow to save all intermediate files created during the run.
+
+</details>
+
+<details><summary><b><code>--no_msa</code></b></summary>
+  
+default: False
+
+This parameters does not allow to perform MSA in case input are uniligned sequences.
+
+</details>
