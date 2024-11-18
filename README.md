@@ -183,7 +183,7 @@ setting `remove_cutoff = 0.8` removes line 6 (`T--G----ATG----------------`)
 setting `remove_cutoff = 0.5` removes 6 lines (1, 4, 5, 6, 7, 8)
 
 setting `remove_cutoff = 0.3` removes 8 lines (last two lines remain)
-</details>ù
+</details>
 
 <details><summary><b><code>--rename_leafs</code></b></summary>
   
