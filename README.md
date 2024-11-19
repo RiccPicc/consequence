@@ -29,6 +29,7 @@ For windows user is highly reccomanded to use [WSL2](https://learn.microsoft.com
 - [ ] Build phylogenetic tree (iqtree2)
 - [x] Rename phylogenetic tree leafs (from sequence ID to species name)
 - [ ] Implement [barcoding gap analysis script](https://github.com/AleTatti/Barcoding-Analysis)
+- [ ] Interactive GUI
 
 ## Example
 TODO
