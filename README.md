@@ -37,7 +37,7 @@ TODO
 ## Customization parameters 
 `consequence` lets you customize paramaters for a full control of the dataset you need for your analysis. The aim is to produce a consensus sequence and/or an MSA ideal for your downstream analyses.
 
-**REMINDER**: After each of these parameters you have to insert the value withouot "=", just a space. For example `python -m consequence --input test/my_sequences.fasta --output_path ./test/results/ --rename_leafs False` 
+**REMINDER**: After each of these parameters you have to insert the value withuot "=", just a space. For example `python -m consequence --input test/my_sequences.fasta --output_path ./test/results/ --rename_leafs False` 
 
 <details><summary><b><code>--find_best_position</code></b></summary>
 
