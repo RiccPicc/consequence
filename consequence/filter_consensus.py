@@ -106,6 +106,9 @@ def get_consensus(bases, nom_cutoff):
     if nom_cutoff < .5:
         warnings.warn("Cutoff value provided is very low. Consensus result might be misleading.")
 
+    if len(set(bases)) == 1 and bases[0] == "-":
+        return ""
+
     count_bases = Counter(bases)
     sorted_bases = count_bases.most_common()
     highest_count = sorted_bases[0][1]
@@ -124,7 +127,7 @@ def get_consensus(bases, nom_cutoff):
 
     return "n"
 
-def build_consensus(matrix, start=0, end=None, no_cut_consensus=False, nom_cutoff=.8):
+def build_consensus(matrix, start=0, end=None, no_cut_consensus=False, nom_cutoff=.8, name="consensus"):
     """
     nom_cutoff is the parameter used to establish if two bases have to be considered as one. For example if there are 8 "a" and 7 "t", consensus is "a" if nom_cutoff is 1, "w" if nom_cutoff is lower (like 0.8).
     """
@@ -141,7 +144,9 @@ def build_consensus(matrix, start=0, end=None, no_cut_consensus=False, nom_cutof
     for row in matrix:
         consensus += get_consensus(row, nom_cutoff)
 
-    return SeqRecord(Seq(consensus[start:end]), id="consensus", description="Consensus sequences from the original MSA")
+    consensus_record = SeqRecord(Seq(consensus[start:end]), id=name, description="Consensus sequences from the original MSA")
+
+    return consensus_record
 
 def cut_msa(sequences, start=0, end=None, remove_cutoff=None):
     remove_low_informative = False
@@ -193,3 +198,36 @@ def save_fasta(sequences, output, separated=False):
             for record in sequences.values():
                 with open(record.id+".fasta", "w") as handle:
                     SeqIO.write(record, handle, "fasta")
+
+def add_species(sp_id, sp_name, sp_dict):
+    if sp_id in sp_dict.keys():
+        sp_dict[sp_name].append(sp_id)
+    else:
+        sp_dict[sp_name] = [sp_id]
+
+def uniform_species_nomenclature(id_species_map):
+    new_seq_dict = {}
+    for sp_id, sp_name in id_species_map.items(): 
+        sp_name = " ".join(sp_name.split()[:-1])
+        add_species(sp_id, sp_name, new_seq_dict)
+    return(new_seq_dict)
+
+def make_species_consensus(sequences, id_species_map, cutoff=.85, gap_count=10, gap_multiplier=None, nom_cutoff=.8, no_cut_consensus=False):
+    species_sequences_output = {}
+    species_dict = uniform_species_nomenclature(id_species_map)
+    species_list = species_dict.keys()
+    for species in species_list:
+        species_sequences = {k:v for k, v in sequences.items() if k in species_dict[species]}
+        matrix = seqs_to_matrix(species_sequences)
+        start, end = find_position(matrix, 
+                                   cutoff=cutoff, 
+                                   gap_count=gap_count, 
+                                   gap_multiplier=gap_multiplier)
+        consensus = build_consensus(matrix, 
+                                    start=start, 
+                                    end=end, 
+                                    nom_cutoff=nom_cutoff,
+                                    no_cut_consensus=no_cut_consensus,
+                                    name=species)
+        species_sequences_output[species] = consensus
+    return species_sequences_output

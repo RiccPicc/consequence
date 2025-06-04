@@ -49,23 +49,28 @@ def main():
         is_msa = False
         print("No alignment will be performed as --no_msa=True")
     # else:
-    #   align with subprocess mafft
+    #   align with subprocess prank
     
 
     # get matrix
-    print("Building positions matrix")
+    print("Building positions matrix...")
     matrix = seqs_to_matrix(sequences)  
 
     # get start, end
     if args.find_best_position and is_msa:
+        print("Finding best positions of start and end...")
         start, end = find_position(matrix, 
                                    cutoff=args.cutoff_best_base, 
                                    gap_count=args.gap_count, 
                                    gap_multiplier=args.gap_multiplier)
     else:
         start, end = 0, len(matrix)-1
+
+    id_species_map = map_id_species(fasta)
+
     # build consensus
     if args.build_consensus:
+        print("Building consensus of all sequences...")
         consensus = build_consensus(matrix, 
                                     start=start, 
                                     end=end, 
@@ -73,30 +78,47 @@ def main():
                                     no_cut_consensus=args.no_cut_consensus)
         # save consensus as fasta
         save_fasta(consensus, out+"consensus.fasta", separated=False)
+        print("Consensus saved")
+        if args.save_species:
+            print("Building consensus for each species...")
+            species_consensus = make_species_consensus(sequences,id_species_map, 
+                                   cutoff=args.cutoff_best_base, 
+                                   gap_count=args.gap_count, 
+                                   gap_multiplier=args.gap_multiplier, 
+                                    nom_cutoff=args.nomenclature_cutoff,
+                                    no_cut_consensus=args.no_cut_consensus)
+            save_fasta(species_consensus, out+"species-wise_consensus.fasta", separated=False)
+            print("All species consensus saved")
+            
     # cut msa
     if args.cut_msa and is_msa:
+        print("Removing long, uninformative gaps from MSA...")
         msa_cut, rem_cut = cut_msa(sequences, start=start, end=end)
         # save msa as fasta
         save_fasta(msa_cut, out+"cut_msa.fasta", separated=False)
+        print("Final MSA saved")
         if args.remove_cutoff != None:
             save_fasta(rem_cut, out+"removed.fasta", separated=False)
+            print("Clean sequences used for MSA saved individually")
     
     # use iqtree2 on cut_msa, species_consensus, msa_not_cut
     # rename_leafs on .treefile
     if args.rename_leafs:
-        print("Producing map id ~ species")
-        id_species_map = map_id_species(fasta)
         print("Map produced")
         # rename tree leafs
         tree_path = out+"cut_msa.fasta.treefile"
-        print("Renaming leafs")
+        print("Renaming leafs...")
         renamed_tree = rename_leafs(tree_path, id_species_map)
         print("Leafs renamed")
         renamed_tree_output = out+"renamed_tree.treefile"
-        print("Returning output %s" % renamed_tree_output)
+        print("Returning output %s..." % renamed_tree_output)
         with open(renamed_tree_output, "w") as handle:
             handle.write(renamed_tree)
-        print("%s created with success" % renamed_tree_output)
+        print("%s created with success!" % renamed_tree_output)
+    
+    print("Run finished with success!")
+
+
 
 if __name__ == "__main__":
     main()
