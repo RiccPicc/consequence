@@ -1,6 +1,8 @@
 import argparse
-from .filter_consensus import *
-from .rename_leafs import *
+from .check_functions import *
+from .consensus_functions import *
+from .download_seqs import *
+from .manage_names import *
 
 def parse_arguments():
     parser = argparse.ArgumentParser(description="Process a FASTA file to produce consensus sequence, cut alignment for best downstream phylogenetic analyses, and build phylogenetic tree. Read https://github.com/RiccPicc/consequence for more details.")
@@ -10,6 +12,9 @@ def parse_arguments():
     parser.add_argument('--output_path', type=str, required=True, help="Path where to place output files.")
 
     # Optional arguments with default values
+    parser.add_argument('--taxid', type=str, default="", help="NCBI taxid you are looking for.")
+    parser.add_argument('--gene_name', type=str, default="", help="gene name you want to downalod.")
+    parser.add_argument('--taxon', type=str, default="", help="Taxon you are looking for (species, genus, family, etc.).")
     parser.add_argument('--find_best_position', type=lambda x: x.lower() == 'true', default=True, help="Whether to find the best position to cut alignment and consensus sequence (default: True). Does not work with unaligned files if no_msa=True. ")
     parser.add_argument('--cutoff_best_base', type=float, default=0.85, help="Cutoff value for selecting the best base per position (default: 0.85).")
     parser.add_argument('--gap_count', type=int, default=10, help="Maximum allowed gap open (default: 10).")
@@ -30,10 +35,29 @@ def parse_arguments():
 def main():
     args = parse_arguments()
 
-    fasta = args.input
+    # read input
+    infile = args.input # add function to read input and make different things accoring to outputs. Consider that input file can be more than one. 
+    infile_type = assign_input(infile)
+    match infile_type:
+        case "text":
+            "TODO: check how is the text and prepare to download; list of all genes, taxa, taxid produced"
+        case "fasta":
+            "TODO: check if MSA, in such case skip alignment"
+            fasta = infile
+        case "tree":
+            "TODO: skip to tree file management"
     out = args.output_path
     if not out.endswith("/"):
         out += "/"
+    
+    gene_name_input = args.gene_name # need a function to check the input name and if present consider it 
+    taxon_name_input = args.taxon
+    taxid_input = args.taxid
+
+    run_download(gene_name=gene_name_input,
+                 taxon_name=taxon_name_input,
+                 taxid=taxid_input)
+    
     # read file
     print("Reading sequences file")
     sequences = extract_sequences(fasta)
