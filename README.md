@@ -11,21 +11,23 @@
 - [IQ-TREE2](http://www.iqtree.org/#download)
 
 ## Features
-- [ ] Useable from command line
-- [ ] Save all intermediate files
-- [ ] Download data using NCBI queries
-- [ ] Recognition of fasta file and perform alignment if needed
+- [x] Useable from command line
+- [x] Save all intermediate files
+- [x] Download data using NCBI queries
+- [x] Recognition of fasta file and perform alignment if needed
 - [x] Build map sequence ID - species
 - [x] Produces a consensus sequence
 - [x] Finds best position to cut the MSA and the consensus for better performance of downstream phylogenetic analyses
 - [x] Removes from MSA uninformative sequences
 - [x] Customization parameters to better fit your interests
 - [ ] Possibility to remove internal long gaps
+- [ ] Detection of outliers
 - [ ] Concatenate sequences based on metadata
 - [ ] Build consensus species by species
 - [ ] Concatenate species consesnsus sequences
 - [ ] Build phylogenetic tree (iqtree2)
 - [x] Rename phylogenetic tree leafs (from sequence ID to species name)
+- [ ] Print phylogenetic tree
 - [ ] Implement [barcoding gap analysis script](https://github.com/AleTatti/Barcoding-Analysis)
 - [ ] Interactive GUI
 
