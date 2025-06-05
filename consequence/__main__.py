@@ -12,7 +12,6 @@ def parse_arguments():
     parser.add_argument('--output_path', type=str, required=True, help="Path where to place output files.")
 
     # Optional arguments with default values
-    parser.add_argument('--taxid', type=str, default="", help="NCBI taxid you are looking for.")
     parser.add_argument('--gene_name', type=str, default="", help="gene name you want to downalod.")
     parser.add_argument('--taxon', type=str, default="", help="Taxon you are looking for (species, genus, family, etc.).")
     parser.add_argument('--find_best_position', type=lambda x: x.lower() == 'true', default=True, help="Whether to find the best position to cut alignment and consensus sequence (default: True). Does not work with unaligned files if no_msa=True. ")
@@ -36,8 +35,36 @@ def main():
     args = parse_arguments()
 
     # read input
-    infile = args.input # add function to read input and make different things accoring to outputs. Consider that input file can be more than one. 
-    infile_type = assign_input(infile)
+    infiles = args.input.split(",") # add function to read input and make different things accoring to outputs. Consider that input file can be more than one. 
+    infiles_type = {"text":[], "fasta":[], "tree":[]}
+    for i in infiles:
+        infiles_type[assign_input(i)].append(i)
+
+    out = args.output_path
+    if not out.endswith("/"):
+        out += "/"
+
+    taxa = args.taxon.split(",")
+    genes = args.gene_name.split(",")
+    # what to do if text?
+    # if text or taxa/gene in input proceed. If just one of the two present pass but raise warning
+    if len(taxa) > 0:
+        print(f"Found {",".join(taxa)} as input taxa")
+    if genes != "":
+        print(f"Found {",".join(genes)} as input genes") 
+
+    if len(infiles_type["text"]) > 0:
+        for i in infiles_type["text"]:
+            if check_goodness(i):
+                taxa.extend(extract_taxa(i))
+                genes.extend(extract_genes(i))
+            else:
+                raise Warning(f"{i} not valid text format. Please make sure you have taxon names or taxon ids in the first line and genes in the second line. Both lines are mandatory.")
+        
+    # text must be checked if ok
+    # proceed to execute fasta (msa, consensus, trim gaps), if tree skip this 
+    # proceed tree (iqtree, renaming, picture)
+
     match infile_type:
         case "text":
             "TODO: check how is the text and prepare to download; list of all genes, taxa, taxid produced"
@@ -46,13 +73,6 @@ def main():
             fasta = infile
         case "tree":
             "TODO: skip to tree file management"
-    out = args.output_path
-    if not out.endswith("/"):
-        out += "/"
-    
-    gene_name_input = args.gene_name # need a function to check the input name and if present consider it 
-    taxon_name_input = args.taxon
-    taxid_input = args.taxid
 
     run_download(gene_name=gene_name_input,
                  taxon_name=taxon_name_input,

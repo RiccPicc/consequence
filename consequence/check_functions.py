@@ -19,7 +19,7 @@ def is_tree(filename):
 def is_text(filename):
     with open(filename, "r") as handle:
         lines = handle.readlines()
-        if len(lines) <= 1 or len(lines) > 3 or lines[0][0]==">":
+        if len(lines) != 2 or lines[0][0]==">":
             return False
 
 def assign_input(filename):
@@ -32,3 +32,12 @@ def assign_input(filename):
             return "text"
         case _:
             raise ValueError("Your input file is not a fasta, a newick tree, or a valid text file.")
+        
+def check_goodness(filename):
+    "TODO"
+
+def extract_genes(filename):
+    "TODO"
+
+def extract_taxa(filename):
+    "TODO"
