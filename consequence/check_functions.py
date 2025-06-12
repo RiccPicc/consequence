@@ -33,11 +33,49 @@ def assign_input(filename):
         case _:
             raise ValueError("Your input file is not a fasta, a newick tree, or a valid text file.")
         
-def check_goodness(filename):
-    "TODO"
 
-def extract_genes(filename):
-    "TODO"
+def explicit(lines):
+    good = False
+    for line in lines:
+        if line.strip(":")[0].lower() in ["taxa", "gene", "taxid", "taxon", "taxids", "genes"]:
+            good = True
+        else:
+            good = False
+    
+    return good
 
-def extract_taxa(filename):
-    "TODO"
+def implicit(lines):
+    return len(lines) == 2
+        
+def check_goodness(lines):
+    if implicit(lines) or explicit(lines):
+        return True
+    
+    return False
+
+def extract_features(text, keyword, word_list):
+    if text.startswith(f"{keyword}:"):
+        text = text.replace("gene:", "").strip("\n").strip(";").strip(",").strip()
+        word_list.extend(text.split(","))
+
+
+def extract_genes(lines):
+    genes = []
+
+    for line in lines:
+        extract_features(line, "gene", genes)
+        extract_features(line, "genes", genes)
+
+    return genes
+    
+
+def extract_taxa(lines):
+    taxa = []
+
+    for line in lines:
+        extract_features(line, "taxon", taxa)
+        extract_features(line, "taxa", taxa)
+        extract_features(line, "taxid", taxa)
+        extract_features(line, "taxids", taxa)
+
+    return taxa

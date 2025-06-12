@@ -55,17 +55,19 @@ def main():
 
     if len(infiles_type["text"]) > 0:
         for i in infiles_type["text"]:
-            if check_goodness(i):
-                taxa.extend(extract_taxa(i))
-                genes.extend(extract_genes(i))
-            else:
-                raise Warning(f"{i} not valid text format. Please make sure you have taxon names or taxon ids in the first line and genes in the second line. Both lines are mandatory.")
+            with  open(i, "r") as handle:
+                lines = [line for line in handle.readlines() if not line.isspace() or line[0] in [";",",",".",":","_",";"]]
+                if check_goodness(lines):
+                    taxa.extend(extract_taxa(lines))
+                    genes.extend(extract_genes(lines))
+                else:
+                    raise Warning(f"{i} not a valid text format. Please make sure you have taxon names or taxon ids in the first line and genes in the second line. Both lines are mandatory.")
         
     # text must be checked if ok
     # proceed to execute fasta (msa, consensus, trim gaps), if tree skip this 
     # proceed tree (iqtree, renaming, picture)
 
-    match infile_type:
+    match infiles_type:
         case "text":
             "TODO: check how is the text and prepare to download; list of all genes, taxa, taxid produced"
         case "fasta":
