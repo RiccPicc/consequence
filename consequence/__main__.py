@@ -63,7 +63,6 @@ def main():
                 else:
                     raise Warning(f"{i} not a valid text format. Please make sure you have taxon names or taxon ids in the first line and genes in the second line. Both lines are mandatory.")
         
-    # text must be checked if ok
     # proceed to execute fasta (msa, consensus, trim gaps), if tree skip this 
     # proceed tree (iqtree, renaming, picture)
 
